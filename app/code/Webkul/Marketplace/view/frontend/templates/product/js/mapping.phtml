@@ -1,0 +1,41 @@
+<?php
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+?>
+<script>
+  	require.config({
+		map: {
+			'*': {
+				productGallery:     '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_Catalog/js/product-gallery.js',
+				baseImage:          '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_Catalog/catalog/base-image-uploader.js',
+				newVideoDialog:  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_ProductVideo/js/new-video-dialog.js',
+				openVideoModal:  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_ProductVideo/js/video-modal.js',
+				configurableAttribute:  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_ConfigurableProduct/catalog/product/attribute.js',
+				productAttributes:  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_Catalog/catalog/product-attributes.js',
+				'Magento_Catalog/catalog/type-events':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_Catalog/catalog/type-events.js',						
+				'Magento_Catalog/js/product/weight-handler':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_Catalog/js/product/weight-handler.js',
+				'Magento_Catalog/catalog/apply-to-type-switcher':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_Catalog/catalog/apply-to-type-switcher.js',
+				'Magento_ConfigurableProduct/js/configurable-type-handler':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_ConfigurableProduct/js/configurable-type-handler.js',
+				'Magento_ConfigurableProduct/js/variations/variations':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_ConfigurableProduct/js/variations/variations.js',
+				'Magento_ConfigurableProduct/js/variations/product-grid':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_ConfigurableProduct/js/variations/product-grid.js',
+				'Magento_ConfigurableProduct/js/variations/steps/bulk':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_ConfigurableProduct/js/variations/steps/bulk.js',
+				'Magento_ConfigurableProduct/js/advanced-pricing-handler':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_ConfigurableProduct/js/advanced-pricing-handler.js',
+				'Magento_ConfigurableProduct/js/options/price-type-handler':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_ConfigurableProduct/js/options/price-type-handler.js',
+				'Magento_ConfigurableProduct/js/variations/steps/attributes_values':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_ConfigurableProduct/js/variations/steps/attributes_values.js',
+				'Magento_ConfigurableProduct/js/variations/steps/select_attributes':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_ConfigurableProduct/js/variations/steps/select_attributes.js',
+				'Magento_ConfigurableProduct/js/variations/steps/summary':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_ConfigurableProduct/js/variations/steps/summary.js',
+				'Magento_Downloadable/downloadable-type-handler':  '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/Magento_Downloadable/downloadable-type-handler.js',						
+				'notification' : '<?php echo $block->getUrl("", ["_secure" => $this->getRequest()->isSecure()])?>'+'/pub/static/adminhtml/Magento/backend/en_US/mage/backend/notification.js'
+			}
+		}
+  	});
+</script>

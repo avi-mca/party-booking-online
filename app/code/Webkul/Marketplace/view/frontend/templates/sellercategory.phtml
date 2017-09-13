@@ -1,0 +1,102 @@
+<?php  
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$partner = $block->getProfileDetail();
+$parentCategory = '';
+$arr_have_child_cat = [];
+$paramData = $this->getRequest()->getParams();
+if (isset($paramData['c'])) {
+    $parentCategory = $paramData['c'];
+}
+$catClass = 'filter-options';
+$subcats='';
+if($parentCategory!=''){
+	$cat = $block->getCategoryById($parentCategory);
+	$subcats = $cat->getChildren();
+	if ($subcats=='') {
+		$catClass = 'filter-current';
+	}
+}
+?>
+<div class="wk-mp-design">
+	<div class="block block-layered-nav">	
+		<div class="block-title">	
+			<strong><span><?php echo __("Browse BY") ?></span></strong>
+		</div>
+		<div class="block-content">
+        <dl id="narrow-by-list" class="<?php echo $catClass?>">
+            <div class="filter-options-title" data-role="title" role="tab" aria-selected="true" aria-expanded="true" tabindex="0"><?php echo __("SELLER'S CATEGORY") ?></div>
+
+            <div class="filter-options-content" data-role="content" role="tabpanel" aria-hidden="false" style="display: block;">
+				<ol class="items">
+					<?php 
+					foreach($block->getCategoryList() as $key => $value){						
+						array_push($arr_have_child_cat, $value['category_id']);
+						if($value['category_id']!=1){ ?>
+							<li class="item">
+		                        <a href="<?php echo $helper->getRewriteUrl('marketplace/seller/collection/shop/'.$partner['shop_url'])."/?c=".$value['category_id'];?>" <?php if($parentCategory == $value['category_id']){ ?> class="current" <?php }?>>
+						            <?php echo $value['catname'] ?>           		
+						            <span class="count">
+						            	<?php echo sprintf('%02d',$value['countCategory'])?>
+						            	<span class="filter-count-label">
+						                	item
+						                </span>
+						            </span>
+						        </a>
+					        </li>
+							<?php
+						}
+					} 					
+					if($parentCategory!=''){
+						if($subcats!=''){
+							foreach(explode(',',$subcats) as $subCatid)
+							{
+								$_category = $block->getCategoryById($subCatid);
+								if($_category->getIsActive()) {
+									if(!in_array($_category->getId(), $arr_have_child_cat)){
+										 ?>
+										<li class="item">
+					                        <a href="<?php echo $helper->getRewriteUrl('marketplace/seller/collection/shop/'.$partner['shop_url'])."/?c=".$_category->getId();?>" <?php if($parentCategory == $_category->getId()){ ?> class="current" <?php }?>>
+									            <?php echo $_category->getName() ?>           		
+									            <span class="count">
+									            	0
+									            	<span class="filter-count-label">
+									                	item
+									                </span>
+									            </span>
+									        </a>
+								        </li>
+										<?php
+									}			
+								}
+							}
+						}else{
+							?>
+		                    <li class="item">
+				                <span class="filter-label"><?php echo __('Category')?></span>
+				                <span class="filter-value"><?php echo $cat->getName();?></span>
+	                            <a title="<?php echo __('Remove Category %1',$cat->getName());?>" href="<?php echo $helper->getRewriteUrl('marketplace/seller/collection/shop/'.$partner['shop_url']);?>" class="action remove">
+			                        <span><?php echo __('Remove This Item')?></span>
+			                    </a>
+	                        </li>
+							<?php
+						}
+					}
+					?>	            	
+			    </ol>
+			</div>
+		</dl>
+	</div>
+	</div>	
+</div>

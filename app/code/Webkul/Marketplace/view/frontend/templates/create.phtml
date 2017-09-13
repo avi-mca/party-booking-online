@@ -1,0 +1,77 @@
+<?php  
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$isPartner= $helper->isSeller();
+if($isPartner==1){
+	$partner=$helper->getSeller();
+	if(($partner['twitter_id']=='')||($partner['facebook_id']=='')||($partner['banner_pic']=='')||($partner['logo_pic']=='')||($partner['company_locality']=='')||($partner['country_pic']=='')||($partner['company_description']=='')){?>
+			<div class="wk-profile-alert">
+				<strong><?php echo __('Warning')?>! </strong><?php echo __('Please Complete')?>
+				<a href="<?php echo $block->getUrl('marketplace/account/editprofile', ['_secure' => $this->getRequest()->isSecure()])?>" style="color: inherit;"><?php echo __('Your Profile')?></a>
+				<span class="wk-close">X</span>
+			</div>
+	<?php 
+	} ?>
+	<form action="<?php echo $block->getUrl('marketplace/product/create', ['_secure' => $this->getRequest()->isSecure()]) ?>" enctype="multipart/form-data" method="post" id="form-customer-product-new">
+		<div class="wk-mp-design">
+			<fieldset class="fieldset info wk-mp-fieldset">
+				<legend class="legend"><span><?php echo __('Add New Product') ?></span></legend>				
+				<?php echo $block->getBlockHtml('formkey')?>
+					<input type="hidden"  name="producttypecustom" id="producttypecustom" value="customproductsimple" title="producttypecustom" class="" />
+					<div class="field required">
+						<label class="label"><?php echo __('Attribute Set') ?>:</label>
+						<div class="control">
+							<select name="set" class="required-entry">
+							<?php foreach($helper->getAllowedSets() as $set) {?>
+								<option value="<?php echo $set['value'] ?>"><?php echo $set['label']?></option>
+							<?php } ?>
+							</select>
+						</div>
+					</div>
+					<div class="field required">
+						<label class="label"><?php echo __('Product Type') ?>:</label>
+						<div class="control">
+							<select name="type" class="required-entry">
+							<?php foreach($helper->getAllowedProductTypes() as $type) {?>
+								<option value="<?php echo $type['value'] ?>"><?php echo $type['label']?></option>
+							<?php } ?>
+							</select>
+						</div>
+					</div>
+			</fieldset>
+		</div>		
+	</form>
+	<div class="buttons-set">
+		<p class="required">* <?php echo __('Required Fields') ?></p>		
+		<p class="back-link">
+			<a href="javascript:;" onclick="javascript: window.history.back();" class="left">&laquo; <?php echo __('Back') ?></a>
+		</p>
+	</div>
+	<script>
+	    require([
+	        "jquery",
+	        "mage/mage"
+	    ], function($){
+	        var dataForm = $('#form-customer-product-new');
+	        dataForm.mage('validation', {});
+	    });
+	</script>
+<?php 
+}else{ ?>
+	<h2 class="wk-mp-error_msg">
+		<?php echo __("To Become Seller Please Contact Admin"); ?>
+	</h2>
+	<?php
+} ?>
+

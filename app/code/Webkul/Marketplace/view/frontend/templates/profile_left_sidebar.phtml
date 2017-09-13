@@ -1,0 +1,251 @@
+<?php 
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+
+$partner=array();
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$partner=$block->getProfileDetail();
+$seller_id=$partner['seller_id'];
+$shoptitle = $partner->getShopTitle();
+if(!$shoptitle){
+	$shoptitle = $partner->getShopUrl();
+}
+$seller_product_count = $helper->getSellerProCount($seller_id);
+
+$logo=$partner->getLogoPic()!=''?$partner->getLogoPic():"noimage.png";
+$logo=$helper->getMediaUrl().'avatar/'.$logo;
+
+$locsearch=$partner['company_locality'];
+$countryflag=$this->getViewFileUrl('Webkul_Marketplace::images/country/countryflags/')."/".strtoupper($partner['country_pic']==""?"xx":$partner['country_pic']).".png";
+$countryName = '';
+$captchenable = $helper->getCaptchaEnable();		
+?>
+<div class="wk-mp-design">
+	<div class="wk-mp-design-inner">
+		<div class="wk-logo-block">
+			<a href="<?php echo $helper->getRewriteUrl('marketplace/seller/profile/shop/'.$partner['shop_url']);?>" >
+				<img class="bannerpicrs" src="<?php echo $logo;?>" />
+			</a>
+		</div>
+		<div class="wk-mp-profile_container">
+			<div id="info" class="block-content">
+				<div class="wk-seller">	
+					<div class="section">
+						<div class="storename">
+							<a class="store-name" href="<?php echo $helper->getRewriteUrl('marketplace/seller/profile/shop/'.$partner['shop_url']);?>">
+								<?php echo $shoptitle; ?>
+							</a>
+						</div>
+						<div class="wefrom">
+							<span class="wk-storeloc-icon wk-icon"></span>
+							<a class="cont-name" title="<?php echo __('Search') ?>" href="<?php echo  $helper->getRewriteUrl('marketplace/seller/location/shop/'.$partner['shop_url'])."?loc=".$locsearch?>" target="_blank">
+								<span><?php echo $locsearch.$countryName; ?></span>
+								<img class="piccountry" title="<?php echo __('View Map') ?>" src="<?php echo $countryflag;  ?>" />
+							</a>
+						</div>
+					</div>					
+					<div class="section" style="background-color: rgb(232, 232, 232);">
+						<?php echo __('Profile') ?>
+					</div>
+					<div class="section">
+						<a class="store-name" href="<?php echo $helper->getRewriteUrl('marketplace/seller/feedback/shop/'.$partner['shop_url'])?>">
+							<?php echo __('Reviews') ?>
+						</a>
+					</div>				
+					<div class="section ask-que"> 
+						<a class="askque"><?php echo __('Contact Us') ?></a>
+						<div class="ask-que">
+							<div id="wk-mp-ask-data">
+								<div class="modals-wrapper">
+									<aside tabindex="0" data-type="popup" data-role="modal" class="modal-popup modal-slide _inner-scroll wk-mp-model-popup">
+									    <div tabindex="0" data-role="focusable-start"></div>
+									    <div data-role="focusable-scope" class="modal-inner-wrap">
+											<header class="modal-header">
+												<h4 class="modal-title"><?php echo __('Contact Seller') ?></h4>
+												<!-- <span  class="wk-close" >x</span> -->
+												<button type="button" data-role="closeBtn" class="action-close wk-close">
+									                <span>Close</span>
+									            </button>
+												<span  class="wk-clear" ></span>
+											</header>
+											<?php
+											if($block->Session->isLoggedIn()){
+												$buyer_name = $block->Session->getCustomer()->getName();
+												$buyer_email = $block->Session->getCustomer()->getEmail();
+												$readonly = "readonly='readonly'";
+											}else{				
+												$buyer_email = '';
+												$buyer_name = '';
+												$readonly = '';
+											}
+											?>
+											<form id="ask-form" method="post" action="#" class="fieldset">
+												<div class="modal-body form-list field required">
+													<label class="label"><?php echo __('Your Name') ?> :</label>
+													<input type="text" name="name" class="queryemail wk-contact_input_fields required-entry" value="<?php echo $buyer_name?>" <?php echo $readonly?>/>
+													<label class="label"><?php echo __('Your Email') ?> :</label>
+													<input type="text" name="email" class="queryemail required-entry validate-email wk-contact_input_fields" value="<?php echo $buyer_email?>" <?php echo $readonly?>/>
+													<label class="label"><?php echo __('Subject') ?> :</label>
+													<input type="text" name="subject" class="wk-contact_input_fields required-entry"/>
+													<label class="label"><?php echo __('Your Query') ?> :</label>
+													<textarea  name="ask" class="queryquestion wk-contact_input_fields required-entry" style="width:100%;"></textarea>
+													<input type="hidden" name="seller-id" value="<?php echo $seller_id;?>"/>
+													<?php 
+													if($captchenable){?>
+														<div>
+															<span>
+																<label for="wk-mp-captcha"><span id="wk-mp-captchalable1"><?php echo rand(1,20)?></span> + <span id="wk-mp-captchalable2"><?php echo rand(1,20)?></span> =</label>
+															</span>
+															<input type="text" class="required-entry wk-contact_input_fields" name="wk-mp-captcha" id="wk-mp-captcha" />
+														</div>
+													<?php
+													}?>
+												</div>
+												<div class="modal-footer">
+													<span class="error"></span>
+													<span class="errormail"></span>
+													<input type="reset" value="<?php echo __('Reset') ?>" id="resetbtn" class="wk-btn wk-btn_default"/>
+													<input type="submit" value="<?php echo __('Submit') ?>" id="askbtn" class="wk-btn wk-btn-primary clickask"/>
+													<span class="wk-clear"></span>
+												</div>
+											</form>        
+									    </div>
+									    <div tabindex="0" data-role="focusable-end"></div>
+									</aside>
+								</div>
+							</div>
+						</div> 
+					</div>
+					<?php
+					if($helper->getSellerPolicyApproval()){?>
+						<div class="section">
+							<a class="store-name" href="<?php echo $helper->getRewriteUrl('marketplace/seller/profile/shop/'.$partner['shop_url']).'#return-policy';?>">
+								<?php echo __('Return Policy') ?>
+							</a>
+						</div>
+						<div class="section">
+							<a class="store-name" href="<?php echo $helper->getRewriteUrl('marketplace/seller/profile/shop/'.$partner['shop_url']).'#shipping-policy';?>">
+								<?php echo __('Shipping Policy') ?>
+							</a>
+						</div>
+					<?php
+					}?>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="wk-mp-design-inner wk-mp-design-inner_last" style="margin-top:10px;">
+		<div class="wk-mp-profile_container storename">
+			<div class="store-name">
+				<?php echo __("Seller's Collection") ?>
+			</div>			
+			<a href="<?php echo $helper->getRewriteUrl('marketplace/seller/collection/shop/'.$partner['shop_url']); ?>">
+				<div class="store-name"><?php echo __('%1 Products',$seller_product_count) ?></div>
+				<button class="button" title="<?php echo __("View Seller's Collection") ?>">
+					<span>
+						<span>
+							<?php echo __('View All'); ?>
+						</span>
+					</span>
+				</button>
+			</a>
+			<div style="margin-top:5px;">
+				<iframe width="100%" height="200" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="//maps.google.com/maps?q=<?php echo $locsearch.$countryName;?>&amp;output=embed"></iframe>
+				<br />
+				<small>
+					<a href="//maps.google.com/maps?q=<?php echo $locsearch.$countryName;?>"><?php echo __('View Location on Map') ?></a>
+				</small>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+    require([
+        "jquery",
+        "mage/mage"
+    ], function($){
+        var askDataForm = $('#ask-form');
+        askDataForm.mage('validation', {});
+
+		$('body').append($('#wk-mp-ask-data'));
+		$('.askque').click(function(){
+			$('#ask-form input,#ask-form textarea').removeClass('mage-error');
+			$('.page-wrapper').css('opacity','0.4');
+			$('.wk-mp-model-popup').addClass('_show');
+			$('#wk-mp-ask-data').show();
+		});
+		$('.wk-close').click(function(){
+			$('.page-wrapper').css('opacity','1');
+			$('#resetbtn').trigger('click');
+			$('#wk-mp-ask-data').hide();
+			$('#ask-form .validation-failed').each(function(){
+				$(this).removeClass('validation-failed');
+			});
+			$('#ask-form .validation-advice').each(function(){
+				$(this).remove();
+			});
+		});
+		$('#askbtn').click(function(){
+			if(askDataForm.valid()!=false){
+				var thisthis = $(this);
+				if(thisthis.hasClass("clickask")){	
+					<?php 
+					if($captchenable){?>
+						var total = parseInt($('#wk-mp-captchalable1').text()) + parseInt($('#wk-mp-captchalable2').text());
+						var wk_mp_captcha = $('#wk-mp-captcha').val();
+						if(total != wk_mp_captcha){
+							$('#wk-mp-captchalable1').text(Math.floor((Math.random()*10)+1));
+							$('#wk-mp-captchalable2').text(Math.floor((Math.random()*100)+1));
+							$('#wk-mp-captcha').val('');
+							$('#wk-mp-captcha').addClass('mage-error');
+							$(this).addClass('mage-error');
+							$('#ask_form .errormail').text("<?php echo __(' Wrong varification number. ') ?>").slideDown('slow').delay(2000).slideUp('slow');
+						}else{
+							thisthis.removeClass('clickask');
+							$('#wk-mp-ask-data').addClass('mail-procss');
+							$.ajax({
+								url:'<?php echo $block->getUrl("marketplace/seller/sendmail", ["_secure" => $this->getRequest()->isSecure()]) ?>',
+								data:$('#ask-form').serialize(),
+								type:'post',
+								dataType:'json',
+								success:function(d){
+									thisthis.addClass('clickask');
+									$('#wk-mp-ask-data').removeClass('mail-procss')
+									alert("<?php echo __(' Mail Send ') ?>..");
+									$('.wk-close,#resetbtn').trigger('click');
+								}
+							});
+						}
+					<?php 
+					}else{?>
+						thisthis.removeClass('clickask');
+							$('#wk-mp-ask-data').addClass('mail-procss');
+							$.ajax({
+								url:'<?php echo $block->getUrl("marketplace/seller/sendmail", ["_secure" => $this->getRequest()->isSecure()]) ?>',
+								data:$('#ask-form').serialize(),
+								type:'post',
+								dataType:'json',
+								success:function(d){
+									thisthis.addClass('clickask');
+									$('#wk-mp-ask-data').removeClass('mail-procss')
+									alert("<?php echo __(' Mail Send ') ?>..");
+									$('.wk-close,#resetbtn').trigger('click');
+								}
+							});
+						<?php 
+					}?>
+				}
+				return false;
+			}
+		});	
+	});    
+</script>

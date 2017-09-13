@@ -1,0 +1,147 @@
+<?php
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+$_helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$isPartner= $_helper->isSeller();
+$magentoCurrentUrl = $block->getCurrentUrl();
+$allow_pro_type=$_helper->getAllowedProductType();
+?>
+<style type="text/css">
+    @media only screen and (max-width: 767px){
+
+        .block-collapsible-nav.wk-mp-main{
+            top: 20px;
+        }
+    }
+</style>
+<div class="block account-nav block-collapsible-nav wk-mp-main">
+    <div class="title block-collapsible-nav-title" data-mage-init='{"toggleAdvanced": {"toggleContainers": "#block-collapsible-nav-seller", "selectorsToggleClass": "active"}}'>
+        <strong><?php /* @escapeNotVerified */ echo __('Marketplace'); ?></strong>
+    </div>
+    <div class="content block-collapsible-nav-content" id="block-collapsible-nav-seller">
+        <nav class="account-nav">
+            <ul class="nav items">
+                <?php 
+                if($isPartner){ ?>
+                    <li class="nav item <?php echo strpos($magentoCurrentUrl,'marketplace/account/dashboard')? "current":"";?>">
+                        <?php 
+                        if(strpos($magentoCurrentUrl,'marketplace/account/dashboard')){ ?>      
+                            <strong><?php echo __('Marketplace Dashboard') ?></strong>              
+                        <?php
+                        } else{ ?>        
+                            <a href="<?php echo $block->getUrl('marketplace/account/dashboard', ['_secure' => $this->getRequest()->isSecure()]); ?>">
+                                <?php echo __('Marketplace Dashboard') ?>
+                            </a>                    
+                        <?php 
+                        } ?>                  
+                    </li>   
+                    <li class="nav item <?php echo strpos($magentoCurrentUrl,'marketplace/account/editprofile')? "current":"";?>">     
+                        <?php if(strpos($magentoCurrentUrl,'marketplace/account/editprofile')){ ?>   
+                            <strong><?php echo __('Seller Profile') ?></strong>        
+                        <?php 
+                        } else{ ?>    
+                            <a href="<?php echo $block->getUrl('marketplace/account/editprofile', ['_secure' => $this->getRequest()->isSecure()]); ?>">
+                                <?php echo __('Seller Profile') ?>
+                            </a>                
+                        <?php 
+                        } ?>      
+                    </li>
+                    <?php 
+                    if(strpos($allow_pro_type,'configurable') !== false){ ?>
+                        <li class="nav item <?php echo strpos($magentoCurrentUrl,'marketplace/product_attribute/new')? "current":"";?>">       
+                        <?php if(strpos($magentoCurrentUrl,'marketplace/product_attribute/new')){ ?>                 
+                            <strong><?php echo __('Create Attribute') ?></strong>  
+                            <?php }     
+                            else{ ?>        
+                                <a href="<?php echo $block->getUrl('marketplace/product_attribute/new', ['_secure' => $this->getRequest()->isSecure()]); ?>">
+                                    <?php echo __('Create Attribute') ?></a>           
+                            <?php } ?>              
+                        </li>
+                        <?php
+                    } ?>
+                    <li class="nav item <?php echo (strpos($magentoCurrentUrl,'marketplace/product/add')||strpos($magentoCurrentUrl,'marketplace/product/create'))? "current":"";?>">           
+                        <?php 
+                        if(strpos($magentoCurrentUrl,'marketplace/product/add')||strpos($magentoCurrentUrl,'marketplace/product/create')){ ?>       
+                            <strong><?php echo __('New Products') ?></strong>  
+                        <?php 
+                        } else{ ?>                    
+                            <a href="<?php echo $block->getUrl('marketplace/product/create', ['_secure' => $this->getRequest()->isSecure()]); ?>">
+                                <?php echo __('New Products') ?>
+                            </a>                        
+                        <?php 
+                        } ?>          
+                    </li>                   
+                    <li class="nav item <?php echo strpos($magentoCurrentUrl,'marketplace/product/productlist')? "current":"";?>">         
+                    <?php if(strpos($magentoCurrentUrl,'marketplace/product/productlist')){ ?>       
+                        <strong><?php echo __('My Products List') ?></strong>  
+                        <?php }                 
+                        else{ ?>                    
+                            <a href="<?php echo $block->getUrl('marketplace/product/productlist', ['_secure' => $this->getRequest()->isSecure()]); ?>">
+                                <?php echo __('My Products List') ?>
+                            </a>                        
+                        <?php } ?>          
+                    </li>  
+                                      
+                    <li class="nav item <?php echo strpos($magentoCurrentUrl,'marketplace/transaction/history')? "current":"";?>">
+                        <?php 
+                        if(strpos($magentoCurrentUrl,'marketplace/transaction/history')){ ?>
+                            <strong><?php echo __('My Transaction List') ?></strong>
+                        <?php 
+                        } else{ ?>
+                            <a href="<?php echo $block->getUrl('marketplace/transaction/history', ['_secure' => $this->getRequest()->isSecure()]); ?>"><?php echo __('My Transaction List') ?></a>
+                        <?php 
+                        } ?>                  
+                    </li>
+                    <?php if($_helper->getIsOrderManage()=="1") {?>
+                    <li class="nav item <?php echo strpos($magentoCurrentUrl,'marketplace/order/shipping/')? "current":"";?>">
+                        <?php if(strpos($magentoCurrentUrl,'marketplace/order/shipping')){ ?>
+                            <strong><?php echo __('Manage Print PDF Header Info') ?></strong>
+                        <?php 
+                        } else{ ?>
+                            <a href="<?php echo $block->getUrl('marketplace/order/shipping', ['_secure' => $this->getRequest()->isSecure()]); ?>"><?php echo __('Manage Print PDF Header Info') ?></a>
+                        <?php 
+                        } ?>
+                    </li>
+                    <?php 
+                    } ?>      
+                    <?php echo $block->getChildHtml();?>
+                    <li class="nav item <?php echo strpos($magentoCurrentUrl,'marketplace/order')&&(!strpos($magentoCurrentUrl,'marketplace/order/shipping/'))? "current":"";?>">        
+                        <?php 
+                        if(strpos($magentoCurrentUrl,'marketplace/order')&&!strpos($magentoCurrentUrl,'marketplace/order/shipping/')){ ?>    
+                            <strong><?php echo __('My Order History') ?></strong>  
+                        <?php 
+                        } else{ ?>        
+                            <a href="<?php echo $block->getUrl('marketplace/order/history', ['_secure' => $this->getRequest()->isSecure()]); ?>">
+                                <?php echo __('My Order History') ?>
+                            </a>                        
+                        <?php 
+                        } ?>  
+                    </li>   
+                    <?php 
+                } else{ ?>    
+                    <?php echo $block->getChildHtml();?>
+                    <li class="nav item <?php echo strpos($magentoCurrentUrl,'marketplace/account/becomepartner')? "current":"";?>">
+                        <?php if(strpos($magentoCurrentUrl,'marketplace/account/becomeseller')){ ?> 
+                            <strong><?php echo __('Become Seller') ?></strong>    
+                        <?php }         
+                        else{ ?>    
+                            <a href="<?php echo $block->getUrl('marketplace/account/becomeseller', ['_secure' => $this->getRequest()->isSecure()]); ?>">
+                                <?php echo __('Become Seller') ?>
+                            </a>                    
+                        <?php } ?>      
+                    </li>       
+                <?php 
+                } ?>
+            </ul>
+        </nav>
+    </div>
+</div>

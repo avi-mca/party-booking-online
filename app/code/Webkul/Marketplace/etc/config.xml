@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <marketplace>
+            <general_settings>
+                <percent>20</percent>
+                <seller_approval>1</seller_approval>
+            </general_settings>
+            <product_settings>
+                <product_approval>1</product_approval>
+                <product_edit_approval>1</product_edit_approval>
+            </product_settings>
+            <landingpage_settings>
+                <banner>sell-page-banner.png</banner>
+                <feature_icon1>icon-register-yourself.png</feature_icon1>
+                <feature_icon1_label>Register Yourself</feature_icon1_label>
+                <feature_icon2>icon-add-products.png</feature_icon2>
+                <feature_icon2_label>Add Products</feature_icon2_label>
+                <feature_icon3>icon-start-selling.png</feature_icon3>
+                <feature_icon3_label>Start Selling</feature_icon3_label>
+                <feature_icon4>icon-collect-revenues.png</feature_icon4>
+                <feature_icon4_label>Generate Revenues</feature_icon4_label>
+            </landingpage_settings>
+            <email>
+                <seller_approve_notification_template>marketplace_email_seller_approve_notification_template</seller_approve_notification_template>
+                <becomeseller_request_notification_template>marketplace_email_becomeseller_request_notification_template</becomeseller_request_notification_template>
+                <seller_disapprove_notification_template>marketplace_email_seller_disapprove_notification_template</seller_disapprove_notification_template>
+                <seller_deny_notification_template>marketplace_email_seller_deny_notification_template</seller_deny_notification_template>
+                <product_deny_notification_template>marketplace_email_product_deny_notification_template</product_deny_notification_template>
+                <new_product_notification_template>marketplace_email_new_product_notification_template</new_product_notification_template>
+                <askproductquery_seller_template>marketplace_email_askproductquery_seller_template</askproductquery_seller_template>
+                <askquery_seller_template>marketplace_email_askquery_seller_template</askquery_seller_template>
+                <askquery_admin_template>marketplace_email_askquery_admin_template</askquery_admin_template>
+                <product_approve_notification_template>marketplace_email_product_approve_notification_template</product_approve_notification_template>
+                <product_disapprove_notification_template>marketplace_email_product_disapprove_notification_template</product_disapprove_notification_template>
+                <order_placed_notification_template>marketplace_email_order_placed_notification_template</order_placed_notification_template>
+                <order_invoiced_notification_template>marketplace_email_order_invoiced_notification_template</order_invoiced_notification_template>
+                <seller_transaction_notification_template>marketplace_email_seller_transaction_notification_template</seller_transaction_notification_template>
+                <low_stock_template>marketplace_email_low_stock_template</low_stock_template>
+            </email>
+        </marketplace>
+    </default>
+</config>

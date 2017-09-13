@@ -1,0 +1,18 @@
+<?php
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+
+$product_id=$this->getRequest()->getParam('id');
+$product_coll = $block->getProduct($product_id);
+?>
+<input type="hidden" name="google_experiment[experiment_script]" value="<?php echo $product_coll['google_experiment']['experiment_script']?>">
+<input type="hidden" name="google_experiment[code_id]" value="<?php echo $product_coll['google_experiment']['code_id']?>">

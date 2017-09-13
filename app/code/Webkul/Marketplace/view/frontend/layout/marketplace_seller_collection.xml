@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	<head>
+        <css src="Webkul_Marketplace::css/wk_block.css"/>
+        <css src="Webkul_Marketplace::css/style.css"/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="Webkul\Marketplace\Block\Collection" name="marketplace_sellercollection" template="collectionview.phtml" cacheable="false" before="-">
+                <block class="Magento\Catalog\Block\Product\ProductList\Toolbar" name="product_list_toolbar" template="Magento_Catalog::product/list/toolbar.phtml">
+                    <block class="Magento\Theme\Block\Html\Pager" name="product_list_toolbar_pager"/>
+                </block>
+                <action method="setToolbarBlockName">
+                    <argument name="name" xsi:type="string">product_list_toolbar</argument>
+                </action>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="sidebar.additional">
+            <remove name="catalog.compare.sidebar" />
+            <block class="Webkul\Marketplace\Block\Sellercategory" name="marketplace_sellercollectionleft" template="collectionleft.phtml" cacheable="false" before="-"/>
+            <block class="Webkul\Marketplace\Block\Sellercategory" name="marketplace_sellercategory" template="sellercategory.phtml" cacheable="false" before="-"/>
+        </referenceContainer>
+    </body>
+</page>

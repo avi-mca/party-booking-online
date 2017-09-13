@@ -1,0 +1,374 @@
+<?php
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$orderHelper = $this->helper('Webkul\Marketplace\Helper\Orders');
+$isPartner = $helper->isSeller();
+if($isPartner == 1){
+	$order_id = $this->getRequest()->getParam('id');
+	$order = $block->Order->load($order_id);
+	$orderStatusLabel = $order->getStatusLabel();
+	$paymentCode = '';
+	$payment_method = '';
+    if($order->getPayment()){
+		$paymentCode = $order->getPayment()->getMethod();
+		$payment_method = $order->getPayment()->getMethodInstance()->getTitle();
+	}
+
+    $marketplace_orders = $block->getSellerOrderInfo($order_id);
+	if(count($marketplace_orders)){
+		$tracking=$orderHelper->getOrderinfo($order_id);
+		if($tracking!="" && $paymentCode == 'mpcashondelivery'){
+			$codcharges=$tracking->getCodCharges();
+		}
+		$is_canceled=$tracking->getIsCanceled();
+		if($is_canceled){
+			$orderStatusLabel='Canceled';
+		}
+		?>
+		<div class="wk_mp_design">
+			<div class="fieldset wk_mp_fieldset" id="wk_mp_print_order">
+				<div class="order-details-items ordered">
+				    <div class="order-title">
+				        <strong><?php echo __('Items Ordered') ?></strong>
+				    </div>
+				    <div class="table-wrapper order-items">
+					    <table class="data table table-order-items" id="my-orders-table" summary="<?php echo __('Items Ordered') ?>">
+					        <caption class="table-caption"><?php echo __('Items Ordered') ?></caption>
+					        <thead>
+					            <tr>
+					                <th class="col name"><?php echo __('Product Name') ?></th>
+					                <th class="col sku"><?php echo __('SKU') ?></th>
+					                <th class="col price"><?php echo __('Price') ?></th>
+					                <th class="col qty"><?php echo __('Qty') ?></th>
+					                <th class="col price"><?php echo __('Total Price') ?></th>
+						            <?php
+						            if($paymentCode == 'mpcashondelivery'){?>
+						            	<th class="col price"><?php echo __('COD Charges') ?></th>
+						            <?php
+						            } ?>
+						            <th class="col price"><?php echo __('Admin Commission') ?></th>
+						            <th class="col price"><?php echo __('Vendor Total') ?></th>
+						            <th class="col price"><?php echo __('Subtotal') ?></th>
+					            </tr>
+					        </thead>
+					        <?php 
+					        $_items = $order->getItemsCollection();
+					        $i = 0;
+						    $_count = $_items->count();				    
+						    $subtotal = 0;
+						    $vendor_subtotal =0;
+						    $totaltax = 0;
+						    $admin_subtotal =0;
+						    $shippingamount = 0;
+					    	$couponamount = 0;
+						    $codcharges_total = 0;
+					        foreach ($_items as $_item){
+						    	$row_total = 0;
+						    	$available_seller_item = 0;
+						    	$shippingcharges = 0;
+					    		$couponcharges = 0;
+						    	$itemPrice = 0;			
+						    	$seller_item_cost = 0;			
+						    	$totaltax_peritem = 0;			
+						    	$codcharges_peritem = 0;
+						    	$seller_item_commission = 0;			
+								$orderid = $order_id;		    	
+								$seller_orderslist = $block->getSellerOrdersList($orderid,$_item->getProductId(),$_item->getItemId());
+								foreach($seller_orderslist as $seller_item){
+									$parentitem_falg = 0;
+									$available_seller_item = 1;
+									$totalamount = $seller_item->getTotalAmount();
+									$seller_item_cost = $seller_item->getActualSellerAmount();
+									$seller_item_commission = $seller_item->getTotalCommission();
+									$shippingcharges = $seller_item->getShippingCharges();
+									$couponcharges = $seller_item->getAppliedCouponAmount();
+									$itemPrice = $seller_item->getMageproPrice();
+									$totaltax_peritem = $seller_item->getTotalTax();
+									if($paymentCode=='mpcashondelivery'){
+										$codcharges_peritem = $seller_item->getCodCharges();
+									}
+								}
+								if($available_seller_item == 1){
+									$i++;
+									$seller_item_qty = $_item->getQtyOrdered();
+									$row_total=$itemPrice*$seller_item_qty;
+									
+									$vendor_subtotal=$vendor_subtotal+$seller_item_cost;
+									$subtotal=$subtotal+$row_total;
+									$admin_subtotal = $admin_subtotal +$seller_item_commission;
+									$totaltax=$totaltax+$totaltax_peritem;
+									$codcharges_total=$codcharges_total+$codcharges_peritem;
+									$shippingamount = $shippingamount+$shippingcharges;
+									$couponamount = $couponamount+$couponcharges;
+
+									$result = array();
+							        if ($options = $_item->getProductOptions()) {
+							            if (isset($options['options'])) {
+							                $result = array_merge($result, $options['options']);
+							            }
+							            if (isset($options['additional_options'])) {
+							                $result = array_merge($result, $options['additional_options']);
+							            }
+							            if (isset($options['attributes_info'])) {
+							                $result = array_merge($result, $options['attributes_info']);
+							            }
+							        } ?>
+							        <?php if ($_item->getParentItem()) {
+						                continue;
+						            } ?>
+							        <tbody>
+										<tr class="border" id="order-item-row-<?php echo $_item->getId() ?>">
+											<td class="col name" data-th="<?php echo $block->escapeHtml(__('Product Name')); ?>">
+												<strong class="product name product-item-name"><?php echo $block->escapeHtml($_item->getName()) ?></strong>
+												<?php if($_options = $result): ?>
+											        <dl class="item-options">
+											        <?php foreach ($_options as $_option) : ?>
+											            <dt><?php echo $block->escapeHtml($_option['label']) ?></dt>
+											            <?php if (!$block->getPrintStatus()): ?>
+											                <?php $_formatedOptionValue = $block->getFormatedOptionValue($_option) ?>
+											                <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+											                    <?php echo $block->escapeHtml($_option['value']) ?>
+											                    <?php if (isset($_formatedOptionValue['full_view'])): ?>
+											                    <div class="truncated_full_value">
+											                        <dl class="item-options">
+											                            <dt><?php echo $block->escapeHtml($_option['label']) ?></dt>
+											                            <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+											                        </dl>
+											                    </div>
+											                    <?php endif; ?>
+											                </dd>
+											            <?php else: ?>
+											                <dd>
+											                    <?php echo nl2br($block->escapeHtml( (isset($_option['print_value']) ? $_option['print_value'] : $_option['value']) )) ?>
+											                </dd>
+											            <?php endif; ?>
+											        <?php endforeach; ?>
+											        </dl>
+										        <?php endif; ?>
+											</td>
+											<td class="col sku" data-th="<?php echo $block->escapeHtml(__('SKU')); ?>"><?php echo $_item->getSku() ?></td>
+											<td class="col price" data-th="<?php echo $block->escapeHtml(__('Price')); ?>"><?php echo $order->formatPrice($_item->getPrice())?></td>
+											<td class="col qty" data-th="<?php echo $block->escapeHtml(__('Qty')); ?>">
+								                <ul class="items-qty">
+											        <?php if ($_item->getQtyOrdered() > 0): ?>
+											            <li class="item">
+											                <span class="title"><?php echo __('Ordered'); ?></span>
+											                <span class="content"><?php echo $_item->getQtyOrdered()*1 ?></span>
+											            </li>
+											        <?php endif; ?>
+											        <?php if ($_item->getQtyShipped() > 0): ?>
+											            <li class="item">
+											                <span class="title"><?php echo __('Shipped'); ?></span>
+											                <span class="content"><?php echo $_item->getQtyShipped()*1 ?></span>
+											            </li>
+											        <?php endif; ?>
+											        <?php if ($_item->getQtyCanceled() > 0): ?>
+											            <li class="item">
+											                <span class="title"><?php echo __('Canceled'); ?></span>
+											                <span class="content"><?php echo $_item->getQtyCanceled()*1 ?></span>
+											            </li>
+											        <?php endif; ?>
+											        <?php if ($_item->getQtyRefunded() > 0): ?>
+											            <li class="item">
+											                <span class="title"><?php echo __('Refunded'); ?></span>
+											                <span class="content"><?php echo $_item->getQtyRefunded()*1 ?></span>
+											            </li>
+											        <?php endif; ?>
+											    </ul>
+											</td>
+											<td class="col price" data-th="<?php echo $block->escapeHtml(__('Total Price')); ?>"><?php echo $order->formatPrice($row_total);?></td>
+											<?php
+								            if($paymentCode == 'mpcashondelivery'){?>
+								            	<td class="col price" data-th="<?php echo $block->escapeHtml(__('COD Charges')) ?>"><?php echo $order->formatPrice($codcharges_peritem);?></td>
+								            <?php
+								            } ?>
+											<td class="col price" data-th="<?php echo $block->escapeHtml(__('Admin Commission')); ?>"><?php echo $order->formatPrice($seller_item_commission);?></td>
+											<td class="col price" data-th="<?php echo $block->escapeHtml(__('Vendor Total')); ?>"><?php echo $order->formatPrice($seller_item_cost);?></td>
+											<td class="col subtotal" data-th="<?php echo $block->escapeHtml(__('Subtotal')); ?>"><?php echo $order->formatPrice($row_total);?></td>
+										</tr>
+							        </tbody>
+						        	<?php 
+						        }
+					        }?>
+					        <?php  
+						    $refundedShippingAmount = 0;
+						    $totalCouponAmount = 0;
+						    $totalTaxAmount = 0;
+						    $taxToSeller = $helper->getConfigTaxManage();
+						    foreach($marketplace_orders as $tracking){
+								$shippingamount=$tracking->getShippingCharges();
+								$totalCouponAmount=$tracking->getCouponAmount();
+								$totalTaxAmount=$tracking->getTotalTax();
+								$refundedShippingAmount=$tracking->getRefundedShippingCharges();
+								$taxToSeller=$tracking['tax_to_seller'];
+							}
+				            if($paymentCode == 'mpcashondelivery'){
+					        	$count_td = 8;
+					       	}else{
+					       		$count_td = 7;
+					       	} ?>
+					        <tfoot>	        
+							    <tr class="subtotal">
+							        <th colspan="<?php echo $count_td ?>" class="mark" scope="row">
+							            <?php echo __('Subtotal')?>
+							        </th>
+							        <td>
+							        	<?php echo $order->formatPrice($subtotal); ?>
+							        </td>
+							    </tr>
+							    <tr class="subtotal">
+							        <th colspan="<?php echo $count_td ?>" class="mark" scope="row">
+							            <?php echo __('Shipping & Handling')?>
+							        </th>
+							        <td>
+							        	<?php echo $order->formatPrice($shippingamount); ?>
+							        </td>
+							    </tr>
+							    <tr>
+							        <th colspan="<?php echo $count_td ?>" class="mark" scope="row">
+							            <?php echo __('Discount')?>
+							        </th>
+							        <td>
+							        	<?php echo $order->formatPrice($totalCouponAmount); ?>
+							        </td>
+							    </tr>
+							    <tr class="subtotal">
+							        <th colspan="<?php echo $count_td ?>" class="mark" scope="row">
+							            <?php echo __('Total Tax')?>
+							        </th>
+							        <td>
+							        	<?php 
+							        	echo $order->formatPrice($totaltax);
+							        	$admintotaltax = 0;
+							        	$vendortotaltax = 0;
+							        	if (!$taxToSeller) {
+							                $admintotaltax = $totaltax;
+							            } else {
+							            	$vendortotaltax = $totaltax;
+							            } ?>
+							        </td>
+							    </tr>
+							    <?php
+					            if($paymentCode == 'mpcashondelivery'){ ?>
+							    	<tr class="subtotal">
+							    		<th colspan="<?php echo $count_td ?>" class="mark" scope="row">
+								            <?php echo __('Total COD Charges')?>
+								        </th>							        
+								        <td>
+								        	<?php echo $order->formatPrice($codcharges_total); ?>
+								        </td>
+							    	</tr>
+							    <?php
+							    }?>
+							    <tr class="subtotal">
+							        <th colspan="<?php echo $count_td ?>" class="mark" scope="row">
+							            <strong><?php echo __('Total Ordered Amount')?></strong>
+							        </th>
+							        <td>
+							        	<strong><?php echo $order->formatPrice($subtotal+$shippingamount+$codcharges_total+$totaltax-$totalCouponAmount); ?></strong>
+							        </td>
+							    </tr>
+							    <tr class="subtotal">
+							        <th colspan="<?php echo $count_td ?>" class="mark" scope="row">
+							            <?php echo __('Total Vendor Amount')?>
+							        </th>
+							        <td>
+							        	<?php echo $order->formatPrice($vendor_subtotal+$shippingamount+$codcharges_total+$vendortotaltax-$refundedShippingAmount-$couponamount); ?>
+							        </td>
+							    </tr>
+							    <tr class="subtotal">
+							        <th colspan="<?php echo $count_td ?>" class="mark" scope="row">
+							            <?php echo __('Total Admin Commission')?>
+							        </th>
+							        <td>
+							        	<?php echo $order->formatPrice($admin_subtotal+$admintotaltax); ?>
+							        </td>
+							    </tr>
+						    </tfoot>
+					    </table>
+					</div>
+			    </div>				
+				<div class="block block-order-details-view">
+				    <div class="block-title">
+				        <strong><?php echo __('Buyer Information') ?></strong>
+				    </div>
+				    <div class="block-content">
+			            <div class="box-content">
+			            	<div class="box">
+				                <div class="wk_row">
+									<span class="label"><?php echo __('Customer Name')?> : </span>
+									<span class="value"><?php echo $order->getCustomerName(); ?></span>
+								</div>
+								<div class="wk_row">
+									<span class="label"><?php echo __('Email')?> : </span>
+									<span class="value"><?php echo $order->getCustomerEmail(); ?></span>
+								</div>
+							</div>
+			            </div>
+				    </div>
+				</div>
+				<div class="block block-order-details-view">
+				    <div class="block-title">
+				        <strong><?php echo __('Order Information') ?></strong>
+				    </div>
+				    <div class="block-content">
+					    <?php if (!$order->getIsVirtual()): ?>
+					        <div class="box box-order-shipping-address">
+					            <strong class="box-title"><span><?php echo __('Shipping Address') ?></span></strong>
+					            <div class="box-content">
+					                <address><?php echo $block->getFormattedAddress($order->getShippingAddress()); ?></address>
+					            </div>
+					        </div>
+
+					        <div class="box box-order-shipping-method">
+					            <strong class="box-title">
+					                <span><?php echo __('Shipping Method') ?></span>
+					            </strong>
+					            <div class="box-content">
+					            <?php if ($order->getShippingDescription()): ?>
+					                <?php echo $block->escapeHtml($order->getShippingDescription()) ?>
+					            <?php else: ?>
+					                <?php echo __('No shipping information available'); ?>
+					            <?php endif; ?>
+					            </div>
+					        </div>
+					    <?php endif; ?>
+				        <div class="box box-order-billing-address">
+				            <strong class="box-title">
+				                <span><?php echo __('Billing Address') ?></span>
+				            </strong>
+				            <div class="box-content">
+				                <address><?php echo $block->getFormattedAddress($order->getBillingAddress()); ?></address>
+				            </div>
+				        </div>
+				        <div class="box box-order-billing-method">
+				            <strong class="box-title">
+				                <span><?php echo __('Payment Method') ?></span>
+				            </strong>
+				            <div class="box-content">
+				                <?php echo $payment_method; ?>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+			</div>
+		</div>
+		<?php 
+	}
+}else{ ?>
+	<h2 class="wk_mp_error_msg">
+		<?php echo __("To Become Seller Please Contact to Admin."); ?>
+	</h2>
+	<?php
+} ?>

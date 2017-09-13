@@ -1,0 +1,239 @@
+<?php  
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+
+$mediaurl=$block->getUrl('pub/media/', ['_secure' => $this->getRequest()->isSecure()]);
+$partner=array();
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$partner=$block->getProfileDetail();
+?>
+<div id="customer-reviews" class="box-collateral box-reviews">
+	<div class="form-add">
+		<?php 
+		$flag = 0;
+		if($block->getCustomerIsLogin()) { ?>
+			<center>
+				<p class="givefeed">
+					<button class="button-large"><span><?php echo __('Give Feedback') ?></span></button>
+				</p>
+			</center>
+			<?php
+			$flag = 2;
+			$feedavailflag = 0;
+			$ordercount = 0;
+			$feedbackcount = 0;
+			if($helper->getReviewStatus()){
+				$flag = 1;
+				$collectionfeed=$block->getFeedcountCollection();
+				foreach ($collectionfeed as $value) {
+					$ordercount = $value->getOrdercount();
+					$feedbackcount = $value->getFeedbackcount();
+				}
+				if($feedbackcount<$ordercount){
+					$feedavailflag =1;
+				}
+			}
+			if(($flag==2) || ($flag==1&&$feedavailflag ==1)){ ?>
+				<div class="showreview">
+					<div class="wk-mp-design">
+						<div class="block block-account">	
+							<div class="block-title">	
+								<strong><span><h4><?php echo __('Write Your Own Feedback') ?></h4></span></strong>
+							</div>
+						</div>
+						<div class="fieldset wk-mp-fieldset">
+							<form id="review-form" method="post" action="<?php echo $block->getUrl('marketplace/seller/newfeedback', ['_secure' => $this->getRequest()->isSecure()]) ?>" enctype="multipart/form-data" >
+								<?php echo $block->getBlockHtml('formkey'); ?>
+								<fieldset class="fieldset info wk-mp-fieldset">
+									<h4><?php echo __('How do you rate this Store') ?>?</h4>
+									<span id="input-message-box"></span>
+									<table id="product-review-table" class="data-table">
+									<colgroup>
+										<col>
+										<col width="1">
+										<col width="1">
+										<col width="1">
+										<col width="1">
+										<col width="1">
+									</colgroup>
+									<thead>
+										<tr class="first last">
+											<th>&nbsp;</th>
+											<th><span class="nobr">1 <?php echo __('star') ?></span></th>
+											<th><span class="nobr">2 <?php echo __('stars') ?></span></th>
+											<th><span class="nobr">3 <?php echo __('stars') ?></span></th>
+											<th><span class="nobr">4 <?php echo __('stars') ?></span></th>
+											<th><span class="nobr">5 <?php echo __('stars') ?></span></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr class="first odd">
+											<th><?php echo __('Price') ?></th>
+											<td class="value"><input type="radio" class="radio" value="20" id="Price_1" name="feed_price" checked="checked"/></td>
+											<td class="value"><input type="radio" class="radio" value="40" id="Price_2" name="feed_price"></td>
+											<td class="value"><input type="radio" class="radio" value="60" id="Price_3" name="feed_price"></td>
+											<td class="value"><input type="radio" class="radio" value="80" id="Price_4" name="feed_price"></td>
+											<td class="value last"><input type="radio" class="radio" value="100" id="Price_5" name="feed_price"></td>
+										</tr>
+										<tr class="even">
+											<th><?php echo __('Value') ?></th>
+											<td class="value"><input type="radio" class="radio" value="20" id="Value_1" name="feed_value" checked="checked"/></td>
+											<td class="value"><input type="radio" class="radio" value="40" id="Value_2" name="feed_value"></td>
+											<td class="value"><input type="radio" class="radio" value="60" id="Value_3" name="feed_value"></td>
+											<td class="value"><input type="radio" class="radio" value="80" id="Value_4" name="feed_value"></td>
+											<td class="value last"><input type="radio" class="radio" value="100" id="Value_5" name="feed_value"></td>
+										</tr>
+										<tr class="last odd">
+											<th><?php echo __('Quality') ?></th>
+											<td class="value"><input type="radio" class="radio" value="20" id="Quality_1" name="feed_quality" checked="checked"/></td>
+											<td class="value"><input type="radio" class="radio" value="40" id="Quality_2" name="feed_quality"></td>
+											<td class="value"><input type="radio" class="radio" value="60" id="Quality_3" name="feed_quality"></td>
+											<td class="value"><input type="radio" class="radio" value="80" id="Quality_4" name="feed_quality"></td>
+											<td class="value last"><input type="radio" class="radio" value="100" id="Quality_5" name="feed_quality"></td>
+										</tr>
+									</tbody>
+									</table>								
+									<input type="hidden" name="seller_id" id="seller_id" value="<?php echo $partner->getSellerId(); ?>"/>
+									<input type="hidden" name="shop_url" value="<?php echo $partner->getShopUrl(); ?>" />
+									
+									<script type="text/javascript">decorateTable('product-review-table')</script>
+									<div class="field required">
+										<label class="label"><?php echo __('Nickname') ?></label>
+										<div class="control">
+											<input type="text" value="<?php echo $block->getCustomerSessionName(); ?>" class="input-text required-entry widthinput nickname" id="nickname_field" name="feed_nickname">
+										</div>
+									</div>
+									<div class="field required">
+										<label class="label"><?php echo __('Summary of Your Review') ?></label>
+										<div class="control">
+											<input type="text" value="" class="input-text required-entry widthinput summary_field" id="summary_field" name="feed_summary">
+										</div>
+									</div>
+									<div class="field required">
+										<label class="label"><?php echo __('Review') ?></label>
+										<div class="control">
+											<textarea class="required-entry widthinput review_field" rows="3" cols="5" id="review_field" name="feed_review"></textarea>
+										</div>
+									</div>
+								</fieldset>
+								<div class="buttons-set">
+									<button class="button" title="<?php echo __('Submit Review') ?>" type="submit"><span><span><?php echo __('Submit Review') ?></span></span></button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<?php
+			}else{ ?>
+				<div class="showreview"><p class="note-msg"><?php echo __('You need to purchase item(s) first to make a review.') ?></p></div>
+				<?php
+			}
+		} else { ?>
+			<?php $block->setCustomerSessionAfterAuthUrl();?>
+			<center><p class="loginmsg"><a class="button-large" href="<?php echo $block->getUrl('customer/account/login/', ['_secure' => $this->getRequest()->isSecure()]) ?>"><?php echo __('Login To Give Feedback')?></a></p></center>
+		 <?php 
+		} ?>  
+    </div>
+</div>
+
+<div class="wk-mp-design" <?php if(($flag==2) || ($flag==1&&$feedavailflag ==1)){ ?>style="margin-top: 20px;"<?php }?>>
+	<div class="block block-account">	
+		<div class="block-title">	
+			<strong><span><h4><?php echo __('Comments & Reviews') ?></h4></span></strong>
+		</div>
+	</div>
+	<div class="fieldset wk-mp-fieldset">			
+		<div class="grid">
+			<div class="hor-scroll">
+				<?php 
+				$ratings=array();
+				$products=array();
+				$rate=array();
+				if(count($block->getCollection())==0){ ?>
+					<div class="wk-emptymsg">
+						<?php echo __('no comment & review available'); ?>
+					</div>
+					<?php
+				} else{ ?>
+					<?php $i=0;
+					foreach($block->getCollection() as $keyed){
+						$i++;?>
+						<div class="wk-orderbox <?php if($i==1) echo "wk-first-order"?>">
+							<div style="padding:7px 7px 0px 7px;">
+								<div class="wk-orderbox-content1">
+									<div class="wk-feedback-details">
+										<div class="mpfeedback">
+											<div class="price">
+												<span class="wk-ordertitle-label wk-span"><?php echo __('Price') ?> </span><span class="wk-ordertitle-label">:</span>
+												<div class="ratingslider-box">
+													<div class="rating" style="width:<?php echo ceil($keyed['feed_price']);?>%;"></div>
+												</div>
+												<div class="clear"></div>
+											</div>
+											<div class="value">
+												<span class="wk-ordertitle-label wk-span"><?php echo __('Value') ?> </span><span class="wk-ordertitle-label">:</span>
+												<div class="ratingslider-box" >
+													<div class="rating" style="width:<?php echo ceil($keyed['feed_value']);?>%;"></div>
+												</div>
+												<div class="clear"></div>
+											</div>
+											<div class="quality">
+												<span class="wk-ordertitle-label wk-span"><?php echo __('Quality') ?> </span><span class="wk-ordertitle-label">:</span>
+												<div class="ratingslider-box">
+													<div class="rating" style="width:<?php echo ceil($keyed['feed_quality']);?>%;"></div>
+												</div>
+												<div class="wk-clear"></div>
+											</div>
+										</div>
+									</div>
+									<div class="wk-feedback-desc">
+										<div class="comment"><?php echo $keyed['feed_review']; ?> </div>
+									</div>
+								</div>
+								<div class="wk-orderbox-content2">
+									<div class="wk-orderbox-details">
+										<?php 
+											$feedcustomer = $block->getCustomer()->load($keyed['buyer_id']); 
+											$name = $feedcustomer['firstname'].' '.$feedcustomer['lastname'];  
+										?>
+										<span class="wk-title-label"><?php echo __('Customer: ');?></span>
+										<span class="wk-label"><?php echo $name;?></span>&nbsp;&nbsp;
+										<span class="wk-title-label"><?php echo __('Date: ');?></span>
+										<span class="wk-label"><?php echo $block->formatDate($keyed['created_at']);?></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="wk-clear"></div>
+						<?php
+					} 	?>
+					<?php
+				}?>
+			</div>
+		</div>
+		<?php echo $block->getPagerHtml(); ?>	
+	</div>
+</div>
+<script>
+    require([
+        "jquery",
+        "mage/mage"
+    ], function($){
+        var reviewDataForm = $('#review-form');
+        reviewDataForm.mage('validation', {});
+        $(".givefeed").click(function () {
+			$(".givefeed").hide();
+			$(".feedmsg").parent().hide()
+			$('.showreview').show();
+	    });
+	});
+</script>

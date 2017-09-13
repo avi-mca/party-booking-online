@@ -1,0 +1,25 @@
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+#seller-pay-block {
+  display: inline-block;
+  width: 98.5%;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+#wk-total-sellerprice{
+  font-size: 16px;
+}
+#seller-pay-block tr {
+  border-bottom: 1px solid #eee;
+}
+#seller-pay-block td {
+  padding: 10px;
+  vertical-align: top;
+}

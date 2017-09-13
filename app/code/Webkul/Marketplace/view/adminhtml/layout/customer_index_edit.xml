@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="customer_form">
+        	 <block class="Webkul\Marketplace\Block\Adminhtml\Customer\Edit\Tabs" name="seller_edit_tab_view" />
+        	 <block class="Webkul\Marketplace\Block\Adminhtml\Customer\Edit\PaymentInfoTab" name="seller_edit_paymentinfo_tab_view" />
+        	 <block class="Webkul\Marketplace\Block\Adminhtml\Customer\Edit\CommissionTab" name="seller_edit_commission_tab_view" />
+        	 <block class="Webkul\Marketplace\Block\Adminhtml\Customer\Edit\AddProductTab" name="seller_edit_addproduct_tab_view" />
+        	 <block class="Webkul\Marketplace\Block\Adminhtml\Customer\Edit\RemoveProductTab" name="seller_edit_removeproduct_tab_view" />
+        	 <block class="Webkul\Marketplace\Block\Adminhtml\Customer\Edit\RemoveSellerTab" name="seller_edit_removeseller_tab_view" />
+        	  <block class="Webkul\Marketplace\Block\Adminhtml\Customer\Edit\AddSellerTab" name="seller_edit_addseller_tab_view" />
+        </referenceBlock>    
+    </body>
+</page>

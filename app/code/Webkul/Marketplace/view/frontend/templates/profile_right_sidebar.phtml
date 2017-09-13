@@ -1,0 +1,139 @@
+<?php   
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+
+$feeds=$block->getFeed();
+if(!isset($feeds['feed_price'])){
+	$feeds['feed_price'] = 0;
+}
+if(!isset($feeds['feed_value'])){
+	$feeds['feed_value'] = 0;
+}
+if(!isset($feeds['feed_quality'])){
+	$feeds['feed_quality'] = 0;
+}
+$partner=array();
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$partner=$block->getProfileDetail();
+$seller_id=$partner['seller_id'];
+$shoptitle = $partner->getShopTitle();
+if(!$shoptitle){
+	$shoptitle = $partner->getShopUrl();
+}
+$feedback_url = $helper->getRewriteUrl('marketplace/seller/feedback/shop/'.$partner['shop_url']);
+?>
+<div class="wk-mp-design">
+	<div class="wk-mp-design-inner">
+		<div class="store-name storename">
+			<?php echo __("%1 's Rating",$shoptitle) ?>
+		</div>
+		<div class="wk-mp-design-inner wk-mp-design-inner-last">
+			<div class="row">			
+				<span><?php echo __('Average Rating') ?></span>
+				<div class="mpfeedback">
+					<div class="price">
+						<span class="wk-ordertitle-label"><?php echo __('Price') ?> </span><span>:</span>
+						<div class="ratingslider-box">
+							<div class="rating" style="width:<?php echo ceil($feeds['price']);?>%;"></div>
+						</div>
+						<span>&nbsp;(<?php echo round(($feeds['price']/20), 1, PHP_ROUND_HALF_UP) ?>)</span>
+						<div class="clear"></div>
+					</div>
+					<div class="value">
+						<span class="wk-ordertitle-label"><?php echo __('Value') ?> </span><span>:</span>
+						<div class="ratingslider-box" >
+							<div class="rating" style="width:<?php echo ceil($feeds['value']);?>%;"></div>								
+						</div>
+						<span>&nbsp;(<?php echo round(($feeds['value']/20), 1, PHP_ROUND_HALF_UP)?>)</span>
+						<div class="clear"></div>
+					</div>
+					<div class="quality">
+						<span class="wk-ordertitle-label"><?php echo __('Quality') ?> </span><span>:</span>
+						<div class="ratingslider-box">
+							<div class="rating" style="width:<?php echo ceil($feeds['quality']);?>%;"></div>
+						</div>
+						<span>&nbsp;(<?php echo round(($feeds['quality']/20), 1, PHP_ROUND_HALF_UP)?>)</span>
+						<div class="wk-clear"></div>
+					</div>
+					<div class="quality">
+						<span><?php echo __('Reviewed') ?> </span>
+						<a class="store-name" href="<?php echo $feedback_url ?>" style="font-weight: bold;padding-left: 2px;"><?php echo __("%1 Times",$feeds['feedcount'])?></a>
+					</div>
+					<a href="<?php echo $feedback_url ?>">
+						<button class="button" title="<?php echo __("Make a Review") ?>">
+							<span>
+								<span>
+									<?php echo __('Make a Review'); ?>
+								</span>
+							</span>
+						</button>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="store-name storename">
+			<?php echo __("Recent Feedback") ?>
+		</div>
+		<?php
+		foreach ($block->getFeedCollection() as $keyed) {			
+			$feedcustomer = $block->Customer->load($keyed['buyer_id']); 
+			$name = $feedcustomer['firstname'].' '.$feedcustomer['lastname'];
+			$feed_datetime= strtotime($keyed['created_at']);
+    		$feed_date = date('d-M-Y', $feed_datetime);
+			?>
+			<div class="wk-mp-design-inner" style="border-bottom:none;">
+				<span class="store-name storename">
+					<?php echo __("By %1",$name,$keyed['created_at'])."</span> ".__("on")." <span class='store-name storename'>".__("%1",$feed_date) ?>
+				</span>
+			</div>
+			<div class="wk-mp-design-inner wk-mp-design-inner-last">
+				<div><?php echo $keyed['feed_summary']; ?> </div>
+				<div class="mpfeedback">
+					<div class="price">
+						<span class="wk-ordertitle-label"><?php echo __('Price') ?> </span><span>:</span>
+						<div class="ratingslider-box">
+							<div class="rating" style="width:<?php echo ceil($keyed['feed_price']);?>%;"></div>
+						</div>
+						<span>&nbsp;(<?php echo round(($keyed['feed_price']/20), 1, PHP_ROUND_HALF_UP)?>)</span>
+						<div class="clear"></div>
+					</div>
+					<div class="value">
+						<span class="wk-ordertitle-label"><?php echo __('Value') ?> </span><span>:</span>
+						<div class="ratingslider-box" >
+							<div class="rating" style="width:<?php echo ceil($keyed['feed_value']);?>%;"></div>								
+						</div>
+						<span>&nbsp;(<?php echo round(($keyed['feed_value']/20), 1, PHP_ROUND_HALF_UP)?>)</span>
+						<div class="clear"></div>
+					</div>
+					<div class="quality">
+						<span class="wk-ordertitle-label"><?php echo __('Quality') ?> </span><span>:</span>
+						<div class="ratingslider-box">
+							<div class="rating" style="width:<?php echo ceil($keyed['feed_quality']);?>%;"></div>
+						</div>
+						<span>&nbsp;(<?php echo round(($keyed['feed_quality']/20), 1, PHP_ROUND_HALF_UP)?>)</span>
+						<div class="wk-clear"></div>
+					</div>
+					<a href="<?php echo $feedback_url ?>">
+						<button class="button" title="<?php echo __("Make a Review") ?>">
+							<span>
+								<span>
+									<?php echo __('Make a Review'); ?>
+								</span>
+							</span>
+						</button>
+					</a>
+				</div>
+			</div>
+		<?php
+		} ?>		
+	</div>
+</div>

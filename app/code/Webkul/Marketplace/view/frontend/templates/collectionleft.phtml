@@ -1,0 +1,69 @@
+<?php  
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+
+$partner=array();
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$partner=$block->getProfileDetail();
+$seller_id=$partner['seller_id'];
+$shoptitle = $partner->getShopTitle();
+if(!$shoptitle){
+	$shoptitle = $partner->getShopUrl();
+}
+$locsearch=$partner['company_locality'];
+$countryflag=$this->getViewFileUrl('Webkul_Marketplace::images/country/countryflags/')."/".strtoupper($partner['country_pic']==""?"xx":$partner['country_pic']).".png";
+$countryName = '';
+?>
+<div class="wk-mp-design">
+	<div class="wk-mp-design-inner wk-mp-design-inner_last">
+		<div class="wk-mp-profile-container storename">
+			<div class="store-name">
+				<?php echo __("Seller's Information") ?>
+			</div>
+			<div id="info" class="block-content">
+				<div class="wk-seller">	
+					<div class="section">
+						<div class="storename">
+							<a class="store-name" href="<?php echo $helper->getRewriteUrl('marketplace/seller/profile/shop/'.$partner['shop_url']);?>">
+								<?php echo $shoptitle; ?>
+							</a>
+						</div>
+						<div class="wefrom">
+							<span class="wk-storeloc-icon wk-icon"></span>
+							<a class="cont-name" title="<?php echo __('Search') ?>" href="<?php echo  $helper->getRewriteUrl('marketplace/seller/location/shop/'.$partner['shop_url'])."?loc=".$locsearch?>" target="_blank">
+								<span><?php echo $locsearch.$countryName; ?></span>
+								<img class="piccountry" title="<?php echo __('View Map') ?>" src="<?php echo $countryflag;  ?>" />
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<a href="<?php echo $helper->getRewriteUrl('marketplace/seller/profile/shop/'.$partner['shop_url']); ?>">
+				<button class="button" title="<?php echo __("View Seller's Profile") ?>">
+					<span>
+						<span>
+							<?php echo __('View Profile'); ?>
+						</span>
+					</span>
+				</button>
+			</a>
+			<?php echo $this->getChildHtml();?>	
+			<div style="margin-top:5px;">
+				<iframe width="100%" height="200" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="//maps.google.com/maps?q=<?php echo $locsearch.$countryName;?>&amp;output=embed"></iframe>
+				<br />
+				<small>
+					<a href="//maps.google.com/maps?q=<?php echo $locsearch.$countryName;?>"><?php echo __('View Location on Map') ?></a>
+				</small>
+			</div>
+		</div>
+	</div>
+</div>

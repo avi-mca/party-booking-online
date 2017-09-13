@@ -1,0 +1,257 @@
+<?php 
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$_product=$block->getProduct();
+$seller_id = '';
+$marketplaceProduct = $helper->getSellerProductDataByProductId($_product['entity_id']);
+foreach ($marketplaceProduct as $value) {
+	$seller_id = $value['seller_id'];
+}
+if($seller_id!=""){
+	$captchenable = $helper->getCaptchaEnable();
+	$rowsocial = $helper->getSellerDataBySellerId($seller_id);
+	$shoptitle = '';
+	$shop_url = '';
+	foreach ($rowsocial as $value) {
+		$shoptitle = $value['shop_title'];
+		$shop_url = $value['shop_url'];
+		if(!$shoptitle){
+			$shoptitle = $value->getShopUrl();
+		}
+	}
+	$feeds=$helper->getFeedTotal($seller_id);
+	?>
+	<div class="wk-seller-block wk-block no-display" id="mp-wk-block">
+		<div>
+		  	<span class="wk-block-font-bold-up"><?php echo __('Sold By')?></span> <br/>
+		  	<span class="wk-block-title-css">
+				<a href="<?php echo $helper->getRewriteUrl('marketplace/seller/profile/shop/'.$shop_url);?>" title="<?php echo __('Visit Shop') ?>" id="profileconnect"><?php echo $shoptitle; ?></a>
+			</span>
+			<br/>
+			<span class="wk-block-rating">
+			    <?php echo $helper->getSelleRating($seller_id); ?> / 5
+			</span>
+			<div class="wk-seller-rating wk-mp-design-inner">
+				<div style="padding: 5px 0;">
+					<span>
+						<?php 
+						$review_percentage = (($helper->getSelleRating($seller_id)*100)/5);
+						echo $review_percentage."% ".__('positive feedback')." (".__('%1 ratings',number_format($feeds['feedcount'])).") ";
+						?>
+					</span>
+				</div>
+				<div class="row">				    
+				    <div class="mpfeedback">
+						<div class="price">
+							<span class="wk-ordertitle-label"><?php echo __('Price') ?> </span><span>:</span>
+							<div class="ratingslider-box">
+								<div class="rating" style="width:<?php echo ceil($feeds['price']);?>%;"></div>
+							</div>
+							<span>&nbsp;(<?php echo round(($feeds['price']/20), 1, PHP_ROUND_HALF_UP) ?>/5)</span>
+							<div class="clear"></div>
+						</div>
+						<div class="value">
+							<span class="wk-ordertitle-label"><?php echo __('Value') ?> </span><span>:</span>
+							<div class="ratingslider-box" >
+								<div class="rating" style="width:<?php echo ceil($feeds['value']);?>%;"></div>								
+							</div>
+							<span>&nbsp;(<?php echo round(($feeds['value']/20), 1, PHP_ROUND_HALF_UP)?>/5)</span>
+							<div class="clear"></div>
+						</div>
+						<div class="quality">
+							<span class="wk-ordertitle-label"><?php echo __('Quality') ?> </span><span>:</span>
+							<div class="ratingslider-box">
+								<div class="rating" style="width:<?php echo ceil($feeds['quality']);?>%;"></div>
+							</div>
+							<span>&nbsp;(<?php echo round(($feeds['quality']/20), 1, PHP_ROUND_HALF_UP)?>/5)</span>
+							<div class="wk-clear"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="">
+			<div class="ask_que">
+				<a id="askque"><?php echo __('Contact Us') ?></a>				
+			</div>								
+			<?php echo $block->getChildHtml();?>
+		</div>	
+	</div>
+	<div class="ask-que">
+		<div id="wk-mp-ask-data">
+			<div class="modals-wrapper">
+				<aside tabindex="0" data-type="popup" data-role="modal" class="modal-popup modal-slide _inner-scroll wk-mp-model-popup">
+				    <div tabindex="0" data-role="focusable-start"></div>
+				    <div data-role="focusable-scope" class="modal-inner-wrap">
+						<header class="modal-header">
+							<h4 class="modal-title"><?php echo __('Contact Seller') ?></h4>
+							<!-- <span  class="wk-close" >x</span> -->
+							<button type="button" data-role="closeBtn" class="action-close wk-close">
+				                <span>Close</span>
+				            </button>
+							<span  class="wk-clear" ></span>
+						</header>
+						<?php
+						if($block->Session->isLoggedIn()){
+							$buyer_name = $block->Session->getCustomer()->getName();
+							$buyer_email = $block->Session->getCustomer()->getEmail();
+							$readonly = "readonly='readonly'";
+						}else{				
+							$buyer_email = '';
+							$buyer_name = '';
+							$readonly = '';
+						}
+						?>
+						<form id="ask-form" method="post" action="#" class="fieldset">
+							<div class="modal-body form-list field required">
+								<label class="label"><?php echo __('Your Name') ?> :</label>
+								<input type="text" name="name" class="queryemail wk-contact_input_fields required-entry" value="<?php echo $buyer_name?>" <?php echo $readonly?>/>
+								<label class="label"><?php echo __('Your Email') ?> :</label>
+								<input type="text" name="email" class="queryemail required-entry validate-email wk-contact_input_fields" value="<?php echo $buyer_email?>" <?php echo $readonly?>/>
+								<label class="label"><?php echo __('Subject') ?> :</label>
+								<input type="text" name="subject" class="wk-contact_input_fields required-entry"/>
+								<label class="label"><?php echo __('Your Query') ?> :</label>
+								<textarea  name="ask" class="queryquestion wk-contact_input_fields required-entry" style="width:100%;"></textarea>
+								<input type="hidden" name="seller-id" value="<?php echo $seller_id;?>"/>
+								<input type="hidden" name="product-id" value="<?php echo $_product['entity_id'];?>" />
+								<?php 
+								if($captchenable){?>
+									<div>
+										<span>
+											<label for="wk-mp-captcha"><span id="wk-mp-captchalable1"><?php echo rand(1,20)?></span> + <span id="wk-mp-captchalable2"><?php echo rand(1,20)?></span> =</label>
+										</span>
+										<input type="text" class="required-entry wk-contact_input_fields" name="wk-mp-captcha" id="wk-mp-captcha" />
+									</div>
+								<?php
+								}?>
+							</div>
+							<div class="modal-footer">
+								<span class="error"></span>
+								<span class="errormail"></span>
+								<input type="reset" value="<?php echo __('Reset') ?>" id="resetbtn" class="wk-btn wk-btn_default"/>
+								<input type="submit" value="<?php echo __('Submit') ?>" id="askbtn" class="wk-btn wk-btn-primary clickask"/>
+								<span class="wk-clear"></span>
+							</div>
+						</form>        
+				    </div>
+				    <div tabindex="0" data-role="focusable-end"></div>
+				</aside>
+			</div>
+		</div>
+	</div>
+	<script>
+	    require([
+	        "jquery",
+	        "mage/mage"
+	    ], function($){
+	        var askDataForm = $('#ask-form');
+	        askDataForm.mage('validation', {});
+
+	        $('.product-info-main').append($('#mp-wk-block'));
+	        $('#mp-wk-block').show();
+
+	        /* if($(".add-to-cart").length ) {
+		        $('.add-to-cart').after($('#mp-wk-block'));
+		    }else{
+		        $('.out-of-stock').after($('#mp-wk-block'));
+		    }
+		    if ($( ".add-to-cart" ).length || $( ".out-of-stock" ).length ) {
+	        	$('#mp-wk-block').show();
+	        }else{
+	        	$('#product_addtocart_form').after($('#mp-wk-block'));
+	        	$('#mp-wk-block').show();
+	        } */
+
+			$('body').append($('#wk-mp-ask-data'));
+
+			$(".wk-block-rating" ).mouseover(function() {
+			  	$( ".wk-seller-rating" ).show();
+			}).mouseout(function() {
+			    $( ".wk-seller-rating" ).hide();
+		  	});
+
+			$('#askque').click(function(){
+				$('#ask-form input,#ask-form textarea').removeClass('mage-error');
+				$('.page-wrapper').css('opacity','0.4');
+				$('.wk-mp-model-popup').addClass('_show');
+				$('#wk-mp-ask-data').show();
+			});
+			$('.wk-close').click(function(){
+				$('.page-wrapper').css('opacity','1');
+				$('#resetbtn').trigger('click');
+				$('#wk-mp-ask-data').hide();
+				$('#ask-form .validation-failed').each(function(){
+					$(this).removeClass('validation-failed');
+				});
+				$('#ask-form .validation-advice').each(function(){
+					$(this).remove();
+				});
+			});
+			$('#askbtn').click(function(){
+				if(askDataForm.valid()!=false){
+					var thisthis = $(this);
+					if(thisthis.hasClass("clickask")){	
+						<?php 
+						if($captchenable){?>
+							var total = parseInt($('#wk-mp-captchalable1').text()) + parseInt($('#wk-mp-captchalable2').text());
+							var wk_mp_captcha = $('#wk-mp-captcha').val();
+							if(total != wk_mp_captcha){
+								$('#wk-mp-captchalable1').text(Math.floor((Math.random()*10)+1));
+								$('#wk-mp-captchalable2').text(Math.floor((Math.random()*100)+1));
+								$('#wk-mp-captcha').val('');
+								$('#wk-mp-captcha').addClass('mage-error');
+								$(this).addClass('mage-error');
+								$('#ask_form .errormail').text("<?php echo __(' Wrong varification number. ') ?>").slideDown('slow').delay(2000).slideUp('slow');
+							}else{
+								thisthis.removeClass('clickask');
+								$('#wk-mp-ask-data').addClass('mail-procss');
+								$.ajax({
+									url:'<?php echo $block->getUrl("marketplace/seller/sendmail", ["_secure" => $this->getRequest()->isSecure()]) ?>',
+									data:$('#ask-form').serialize(),
+									type:'post',
+									dataType:'json',
+									success:function(d){
+										thisthis.addClass('clickask');
+										$('#wk-mp-ask-data').removeClass('mail-procss')
+										alert("<?php echo __(' Mail Send ') ?>..");
+										$('.wk-close,#resetbtn').trigger('click');
+									}
+								});
+							}
+						<?php 
+						}else{?>
+							thisthis.removeClass('clickask');
+								$('#wk-mp-ask-data').addClass('mail-procss');
+								$.ajax({
+									url:'<?php echo $block->getUrl("marketplace/seller/sendmail", ["_secure" => $this->getRequest()->isSecure()]) ?>',
+									data:$('#ask-form').serialize(),
+									type:'post',
+									dataType:'json',
+									success:function(d){
+										thisthis.addClass('clickask');
+										$('#wk-mp-ask-data').removeClass('mail-procss')
+										alert("<?php echo __(' Mail Send ') ?>..");
+										$('.wk-close,#resetbtn').trigger('click');
+									}
+								});
+							<?php 
+						}?>
+					}
+					return false;
+				}
+			});	
+		});    
+	</script>
+<?php 
+} ?>

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="3columns" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	<head>
+        <css src="Webkul_Marketplace::css/wk_block.css"/>
+        <css src="Webkul_Marketplace::css/style.css"/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="Webkul\Marketplace\Block\Profile" name="marketplace_sellerprofile" template="profile.phtml" cacheable="false" before="-"/>
+        </referenceContainer>
+        <referenceContainer name="sidebar.main">
+            <block class="Webkul\Marketplace\Block\Profile" name="marketplace_sellerprofileleft" template="profile_left_sidebar.phtml" cacheable="false" before="-"/>
+
+        </referenceContainer>
+        <referenceContainer name="sidebar.additional">
+            <block class="Webkul\Marketplace\Block\Profile" name="marketplace_sellerprofileright" template="profile_right_sidebar.phtml" cacheable="false" before="-"/>
+        </referenceContainer>
+    </body>
+</page>

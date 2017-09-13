@@ -1,0 +1,190 @@
+<?php 
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+
+$partner=array();
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$partner=$block->getProfileDetail();
+$seller_id=$partner['seller_id'];
+$shoptitle = $partner->getShopTitle();
+if(!$shoptitle){
+	$shoptitle = $partner->getShopUrl();
+}
+if($helper->getActiveColorPicker()){?> 
+    <style>
+    .page-main{background-image:none;background-color:<?php echo $partner['background_width'];?>;}
+    </style>
+<?php
+} ?>
+<div class="wk-mp-design">
+	<div class="wk-mp-design-inner wk-mp-design-inner-last">
+		<div class="wk-mp-profile-container storename">
+			<div class="store-name">
+				<?php echo __("About %1",$shoptitle) ?>
+			</div>
+		</div>
+		<span class="data"><?php echo $partner['company_description'];?></span>
+		<div class="wk-mp-profile-container storename wk-mp-display-block-css">
+			<div class="store-name">
+				<?php echo __("On the Social Web") ?>
+			</div>
+			<?php 
+			if($partner->getInstagramActive()){ ?>			
+				<a href="//instagram.com/<?php echo $partner->getInstagramId();?>" target="blank">
+					<span class="wk-social-icon wk-icon wk-social-icon-instagram" title="<?php echo __('Check in Instagram')?>"></span>
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getPinterestActive()){ ?>
+				<a href="//www.pinterest.com/jokestuffs/<?php echo $partner->getPinterestId();?>" target="blank">
+					<span class="wk-social-icon wk-icon wk-social-icon-pinterest" title="<?php echo __('Check in Pinterest')?>"></span>
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getFbActive()){ ?>
+				<a href="//facebook.com/<?php echo $partner->getFacebookId();?>" target="blank">
+					<span class="wk-social-icon wk-icon wk-social-icon-fb" title="<?php echo __('Check in Facebook')?>"></span>
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getTwActive()){ ?>
+				<a href="//twitter.com/<?php echo $partner->getTwitterId();?>" target="blank">
+					<span class="wk-social-icon wk-icon wk-social-icon-tw" title="<?php echo __('Check in Twitter')?>"></span>
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getGplusActive()){ ?>
+				<a href="//plus.google.com/<?php echo $partner->getGplusId();?>" target="blank">
+					<span class="wk-social-icon wk-icon wk-social-icon-gplus" title="<?php echo __('Check in Google+')?>"></span>
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getVimeoActive()){ ?>
+				<a href="//vimeo.com/<?php echo $partner->getVimeoId();?>" target="blank">
+					<span class="wk-social-icon wk-icon wk-social-icon-vimeo" title="<?php echo __('Check in Vimeo')?>"></span>
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getYoutubeActive()){ ?>
+				<a href="//www.youtube.com/user/<?php echo $partner->getYoutubeId();?>" target="blank">
+					<span class="wk-social-icon wk-icon wk-social-icon-utube" title="<?php echo __('Check in Youtube')?>"></span>
+				</a>
+			<?php 
+			} ?>
+			<?php 
+			if($partner->getMoleskineActive()){ ?>
+			<a href="//moleskine.com/<?php echo $partner->getMoleskineId();?>" target="blank">
+				<span class="wk-social-icon wk-icon wk-social-icon-moleskin" title="<?php echo __('Check in Moleskine')?>"></span>
+			</a>
+			<?php 
+			} ?>
+		</div>
+	</div>
+</div>	
+
+<div class="wk-mp-design">
+	<div class="wk-mp-design-inner wk-mp-design-inner-last">
+		<div class="wk-mp-profile-container storename">
+			<div class="store-name">
+				<?php echo __("Recently Added Products") ?>
+			</div>
+		</div>
+		<ul class="page-products">
+			<?php
+			$products=$block->getBestsellProducts();
+            $_helper = $this->helper('Magento\Catalog\Helper\Output');
+            $viewMode = 'grid';
+            $image = 'category_page_grid';
+            $showDescription = false;
+            $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+            ?>
+            <div class="products wrapper grid products-grid">
+                    <?php $iterator = 1; ?>
+                <ol class="products list items product-items">
+                    <?php /** @var $_product \Magento\Catalog\Model\Product */ ?>
+                    <?php foreach ($products as $_product): ?>
+                        <?php /* @escapeNotVerified */ echo($iterator++ == 1) ? '<li class="item product product-item">' : '</li><li class="item product product-item">' ?>
+                        <div class="product-item-info" data-container="product-grid">
+                            <?php
+                            $productImage = $block->getImage($_product, $image);
+                            ?>
+                            <?php // Product Image ?>
+                            <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                                <?php echo $productImage->toHtml(); ?>
+                            </a>
+                            <div class="product details product-item-details">
+                                <?php
+                                    $_productNameStripped = $block->stripTags($_product->getName(), null, true);
+                                ?>
+                                <strong class="product name product-item-name">
+                                    <a class="product-item-link"
+                                       href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>">
+                                        <?php /* @escapeNotVerified */ echo $_helper->productAttribute($_product, $_product->getName(), 'name'); ?>
+                                    </a>
+                                </strong>
+                                <a class="product-item-link"
+                                       href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>">
+                                    <button class="action tocart primary">
+                                    	<span>
+                                    		<span>
+                                    			<?php echo __('View Detail')?>
+                                    		</span>
+                                    	</span>
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                        <?php echo($iterator == count($products)+1) ? '</li>' : '' ?>
+                    <?php endforeach; ?>
+                </ol>
+            </div>
+		</ul>
+	</div>
+	<?php
+	if($helper->getSellerPolicyApproval()){?>		
+		<div class="wk-mp-design-inner wk-mp-design-inner-last">
+			<div class="wk-mp-profile-container storename" id="return-policy">
+				<div class="store-name">
+					<?php echo __("Return Policies") ?>
+				</div>
+			</div>
+			<div>
+				<div class="wk-mp-detail">		
+					<div class="row">
+						<span class="data"><?php echo $partner['return_policy'];?></span>		
+					</div>
+				</div>
+				<a href="#" class="wk-top-page"><?php echo __("Top of Page")?></a>
+			</div>
+			<div class="wk-mp-profile-container storename" id="shipping-policy">
+				<div class="store-name">
+					<?php echo __("Shipping Policies") ?>
+				</div>
+			</div>
+			<div>
+				<div class="wk-mp-detail">		
+					<div class="row">
+						<span class="data"><?php echo $partner['shipping_policy'];?></span>		
+					</div>
+				</div>
+				<a href="#" class="wk-top_page"><?php echo __("Top of Page")?></a>
+			</div>
+		</div>
+	<?php
+	} ?>
+</div>
