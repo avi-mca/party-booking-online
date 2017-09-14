@@ -1,0 +1,295 @@
+<?php 
+/**
+ * Webkul Software.
+ *
+ * @category  Webkul
+ * @package   Webkul_Marketplace
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2016 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Webkul\Marketplace\Block\Account\Dashboard */ 
+
+$helper = $this->helper('Webkul\Marketplace\Helper\Data');
+$captchaEnableStatus = $helper->getCaptchaEnable();
+$orderHelper = $this->helper('Webkul\Marketplace\Helper\Orders');
+$getDateDetail = $block->getDateDetail();
+$total_sale_coll = $block->getTotalSaleColl();
+$total_sale = 0;
+$total_remain_sale = 0;
+foreach($total_sale_coll as $value) {
+	$total_sale = $value->getAmountReceived();
+	$total_remain_sale = $value->getAmountRemain();
+}
+?>
+<div class="wk-mp-page-title page-title">
+	<h2><?php echo __('My Dashboard') ?></h2>
+	<button class="button askque" id="askque"><span><?php echo __('Ask Question to Admin') ?></span></button>
+</div>
+<div class="wk-mp-design">
+	<fieldset class="fieldset info wk-mp-fieldset">
+		<legend class="legend"><span><?php echo __('Your Income') ?></span></legend>
+		<div class="wk-sales">
+			<div class="wk-todaysale wk-sale-css">
+				<span class="wk-todaysale-bg"></span>
+				<span class="wk-sale-color"><label class="wk-sale-label"><?php echo __(' Today ') ?></label><br/><?php echo  $block->getOrder()->formatPrice($getDateDetail['day'])?></span>
+			</div>
+			<div class="wk-weeksale wk-sale-css">					
+				<span class="wk-weeksale_bg"></span>
+	 			<span class="wk-sale-color"><label class="wk-sale-label"><?php echo __(' Week ') ?></label><br/><?php echo $block->getOrder()->formatPrice($getDateDetail['week']); ?></span>
+			</div>
+			<div class="wk-monthsale wk-sale-css">
+				<span class="wk-monthsale_bg"></span>
+				<span class="wk-sale-color"><label class="wk-sale-label"><?php echo __(' Month ') ?></label></br><?php echo $block->getOrder()->formatPrice($getDateDetail['month']); ?></span>
+			</div>
+		</div>
+		<div class="wk-sales" style="margin-top: 10px;">
+			<div class="wk-totalsale wk-total-sale-css">
+			 	<span><?php echo __(' Total Payout ') ?> - <?php echo $block->getOrder()->formatPrice($total_sale); ?></span>
+			</div>
+			<div class="wk-remainsale wk-total-sale-css">
+				<span><?php echo __(' Remaining Amount ') ?> - <?php echo $block->getOrder()->formatPrice($total_remain_sale); ?></span>
+			</div>
+		</div>
+		<div class="grid">
+			<div class="hor-scroll">
+				<div class="wk-dash-chart">
+					<?php echo $block->getChildHtml('diagrams')?>
+				</div>					
+			</div>
+
+		</div>
+	</fieldset>
+</div>	
+<div class="wk-mp-design wk-mp-design2">
+	<fieldset class="fieldset info wk-mp-fieldset">
+		<legend class="legend"><span><?php echo __('Latest Order') ?></span></legend>
+		<div class="grid">
+			<div class="hor-scroll">
+				<?php 
+				if(count($block->getCollection())==0){ ?>		
+					<div class="fieldset wk-mp-fieldset">
+						<div class="wk-emptymsg">
+							<?php echo __('No Order Available') ?>
+						</div>
+					</div>
+					<?php 
+				} else{ ?>
+					<?php $i=0;
+					foreach($block->getCollection() as $res){
+						$order = $block->getOrder()->load($res['order_id']);
+						$state=$order->getState();
+						$status=$order->getStatus();
+						$name=$order->getCustomerName();
+						$tracking=$orderHelper->getOrderinfo($res['order_id']);
+						if($tracking->getIsCanceled()){
+							$state='canceled';
+							$status='Canceled';
+						}
+						
+						if($res['order_id']>0 && $i<6){
+							$i++;?>
+							<div class="wk-orderbox <?php if($i==1) echo "wk-first-order"?>">
+								<div style="padding:7px 7px 0px 7px;">
+									<div class="wk-orderbox-content1">
+										<div class="wk-orderbox-details">
+											<div class="color">
+												<span class="wk-ordertitle-label"><?php echo __('Order') ?></span> <strong>#<?php echo $res['magerealorder_id']; ?></strong>
+											</div>
+											<div class="name">
+												<?php echo $block->getpronamebyorder($res['order_id']); ?>
+											</div>
+											<a href="<?php echo $block->getUrl('marketplace/order/view',['id'=>$res['order_id'], '_secure' => $this->getRequest()->isSecure()])?>">
+													<button class="button" title="<?php echo __('View Order') ?>" type="button">
+														<span><span><span><?php echo __('View Order') ?></span></span></span>
+													</button>
+												</a>
+										</div>
+										<div class="wk-dash-orderstatus">
+											<label for="name" class="wk-dash-label">
+													<div class="status <?php echo strtolower($state); ?>"><?php echo strtoupper($status); ?> </div>
+											</label> 
+										</div>
+									</div>
+									<div class="wk-orderbox-content2">
+										<div class="wk-orderbox-details">
+											<span class="wk-title-label"><?php echo __('Customer: ');?></span>
+											<span class="wk-label"><?php echo $name;?></span>&nbsp;&nbsp;
+											<span class="wk-title-label"><?php echo __('Date: ');?></span>
+											<span class="wk-label"><?php echo $block->formatDate($res['created_at'])?></span>
+										</div>
+										<div class="wk-orderbox-total">
+											<span class="wk-title-label"><?php echo __('Order Total- ');?></span>
+											<span class="wk-label"><strong><?php echo $order->formatPrice($block->getPricebyorder($res['order_id']));?></strong>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="wk-clear"></div>
+						<?php }
+					} 	?>
+					<?php
+				}?>
+			</div>
+		</div>		
+	</fieldset>
+</div>
+<div class="wk-mp-design wk-mp-design2">
+	<fieldset class="fieldset info wk-mp-fieldset">
+		<legend class="legend"><span><?php echo __('Latest Comments & Reviews') ?></span></legend>			
+		<div class="grid">
+			<div class="hor-scroll">
+				<?php 
+				$ratings=array();
+				$products=array();
+				$rate=array();					
+				$reviewcollection=$block->getReviewcollection();
+				if(count($reviewcollection)==0){ ?>
+					<div class="wk-emptymsg">
+						<?php echo __('no comment & review available'); ?>
+					</div>
+					<?php
+				} else{ 
+					$i=0;
+					foreach($reviewcollection as $keyed){						
+						$name=$block->getCustomer()->load($keyed->getBuyerId())->getName();
+						$i++; ?>
+						<div class="wk-orderbox <?php if($i==1) echo "wk-first-order"?>">
+							<div style="padding:7px 7px 0px 7px;">
+								<div class="wk-orderbox-content1">
+									<div class="wk-feedback-details">
+										<div class="mpfeedback">
+											<div class="price">
+												<span class="wk-ordertitle-label wk-span"><?php echo __('Price') ?> </span><span class="wk-ordertitle-label">:</span>
+												<div class="ratingslider-box">
+													<div class="rating" style="width:<?php echo ceil($keyed['feed_price']);?>%;"></div>
+												</div>
+												<div class="clear"></div>
+											</div>
+											<div class="value">
+												<span class="wk-ordertitle-label wk-span"><?php echo __('Value') ?> </span><span class="wk-ordertitle-label">:</span>
+												<div class="ratingslider-box" >
+													<div class="rating" style="width:<?php echo ceil($keyed['feed_value']);?>%;"></div>
+												</div>
+												<div class="clear"></div>
+											</div>
+											<div class="quality">
+												<span class="wk-ordertitle-label wk-span"><?php echo __('Quality') ?> </span><span class="wk-ordertitle-label">:</span>
+												<div class="ratingslider-box">
+													<div class="rating" style="width:<?php echo ceil($keyed['feed_quality']);?>%;"></div>
+												</div>
+												<div class="wk-clear"></div>
+											</div>
+										</div>
+									</div>
+									<div class="wk-feedback-desc">
+										<div class="comment"><?php echo $keyed['feed_review']; ?> </div>
+									</div>
+								</div>
+								<div class="wk-orderbox-content2">
+									<div class="wk-orderbox-details">
+										<span class="wk-title-label"><?php echo __('Customer: ');?></span>
+										<span class="wk-label"><?php echo $name;?></span>&nbsp;&nbsp;
+										<span class="wk-title-label"><?php echo __('Date: ');?></span>
+										<span class="wk-label"><?php echo $keyed['created_at'] ?></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="wk-clear"></div>
+						<?php
+					} 	?>
+					<?php
+				} ?>
+			</div>
+		</div>		
+	</fieldset>
+</div>
+<div class="ask-que">
+	<div id="wk-mp-ask-data">
+		<div class="modals-wrapper">
+			<aside tabindex="0" data-type="popup" data-role="modal" class="modal-popup modal-slide _inner-scroll wk-mp-model-popup">
+			    <div tabindex="0" data-role="focusable-start"></div>
+			    <div data-role="focusable-scope" class="modal-inner-wrap">
+					<header class="modal-header">
+						<h4 class="modal-title"><?php echo __('Ask Question to Admin') ?></h4>
+						<button type="button" data-role="closeBtn" class="action-close wk-close">
+			                <span>Close</span>
+			            </button>
+						<span  class="wk-clear" ></span>
+					</header>
+					<form id="ask-form" method="post" action="#" class="fieldset" data-role="ask-form" data-mage-init='{"validation":{}}'>
+						<div class="modal-body form-list field required">
+							<label class="label"><?php echo __('Subject') ?> :</label>
+							<input type="text" name="subject" class="wk-contact_input_fields required-entry"/>
+							<label class="label"><?php echo __('Your Query') ?> :</label>
+							<textarea  name="ask" class="queryquestion wk-contact_input_fields required-entry" style="width:100%;"></textarea>
+							<input type="hidden" name="seller-id" value="<?php echo $block->getCustomerId();?>"/>
+							<?php 
+							if($captchaEnableStatus){?>
+								<div>
+									<span>
+										<label for="wk-mp-captcha"><span id="wk-mp-captchalable1"><?php echo rand(1,20)?></span> + <span id="wk-mp-captchalable2"><?php echo rand(1,20)?></span> =</label>
+									</span>
+									<input type="text" class="required-entry wk-contact_input_fields" name="wk-mp-captcha" id="wk-mp-captcha" />
+								</div>
+							<?php
+							}?>
+						</div>
+						<div class="modal-footer">
+							<span class="error"></span>
+							<span class="errormail"></span>
+							<input type="reset" value="<?php echo __('Reset') ?>" id="resetbtn" class="wk-btn wk-btn_default"/>
+							<input type="submit" value="<?php echo __('Submit') ?>" id="askbtn" class="wk-btn wk-btn-primary clickask"/>
+							<span class="wk-clear"></span>
+						</div>
+					</form>        
+			    </div>
+			    <div tabindex="0" data-role="focusable-end"></div>
+			</aside>
+		</div>
+	</div>
+</div>
+<div class="buttons-set">
+	<p class="back-link">
+		<a href="javascript:;" onclick="javascript: window.history.back();" class="left">&laquo; <?php echo __('Back') ?></a>
+	</p>
+</div>
+<?php
+$formData = [
+    'mpAskDataSelector' 	=> 	'#wk-mp-ask-data',
+    'askQueSelector' 		=> 	'#askque',
+    'askFormSelector'		=> 	'#ask-form',
+    'askFormInputSelector' 	=> 	'#ask-form input',
+    'askFormTextareaSelector' =>'#ask-form textarea',
+    'pageWrapperSelector' 	=> 	'.page-wrapper',
+    'mpModelPopupSelector' 	=> 	'.wk-mp-model-popup',
+    'showClass' 			=> 	'_show',
+    'mageErrorClass' 		=> 	'mage-error',
+    'resetBtnSelector' 		=> 	'#resetbtn',
+    'wkCloseSelector'		=> 	'.wk-close',
+    'validationFailedSelector' 			=> 	'.validation-failed',
+    'askFormValidationFailedSelector' 	=> 	'#ask-form .validation-failed',
+    'askFormValidationAdviceSelector' 	=> 	'#ask-form .validation-advice',
+    'askFormErrorMailSelector' 			=> '#ask-form .errormail',
+    'askBtnSelector'		=> 	'#askbtn',
+    'mpCaptcha1Selector'	=> 	'#wk-mp-captchalable1',
+    'mpCaptcha2Selector'	=> 	'#wk-mp-captchalable2',
+    'mpCaptchaSelector'		=> 	'#wk-mp-captcha',
+    'mailProcssClass' 		=> 	'mail-procss',
+    'captchaEnableStatus' 	=> 	$captchaEnableStatus,
+    'ajaxMailSendUrl' 		=> 	$block->getUrl("marketplace/account/askquestion", ["_secure" => $this->getRequest()->isSecure()])
+];
+$serializedFormData = $this->helper('Magento\Framework\Json\Helper\Data')->jsonEncode($formData);
+?>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "sellerDashboard": <?php /* @noEscape */ echo $serializedFormData; ?>
+        }
+    }
+</script>

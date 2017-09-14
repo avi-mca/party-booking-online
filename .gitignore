@@ -25,6 +25,8 @@ atlassian*
 /.grunt
 
 /pub/media/*.*
+/pub/media/
+/error_log
 !/pub/media/.htaccess
 /pub/media/catalog/*
 !/pub/media/catalog/.htaccess
